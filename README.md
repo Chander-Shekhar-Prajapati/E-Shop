@@ -22,4 +22,10 @@ This project provides essential e-commerce features like product listing, cart, 
 ✅ User-Friendly UI – Minimal, clean, and modern look
 
 
-💼 LinkedIn   GitHub    
+## 👨‍💻 Author  
+
+**Chander Shekhar Prajapati**  
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/chander-shekhar-prajapati-28593b32b)  
+[![GitHub](https://img.shields.io/badge/GitHub-Follow-black?style=for-the-badge&logo=github)](https://github.com/Chander-Shekhar-Prajapati)  
+
