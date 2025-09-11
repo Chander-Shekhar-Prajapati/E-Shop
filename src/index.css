@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+.scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* index.css ya global.css me add karo */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
