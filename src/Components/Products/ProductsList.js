@@ -1,4 +1,4 @@
-import Jeans from "../../assets/Jeans.png";
+import Jeans from "../../assets/jeans.png";
 import Hoodie from "../../assets/hoodie.png";
 import LeatherJacket from "../../assets/leather-jacket.png";
 import Skirt from "../../assets/skirt.png";
