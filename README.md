@@ -6,7 +6,7 @@ A modern and responsive **E-Commerce Web Application** built with **React.js**, 
 
 ## 🚀 Live Demo
 
-🔗 **Website:** https://your-live-demo-link.vercel.app
+🔗 **Website:** https://e-shop-duqn.vercel.app/
 
 ---
 
@@ -68,7 +68,7 @@ src/
 Clone the repository
 
 ```bash
-git clone https://github.com/your-username/e-shop.git
+git clone https://github.com/chander-shekhar-prajapati/e-shop.git
 ```
 
 Go to project folder
