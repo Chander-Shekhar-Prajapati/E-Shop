@@ -1,13 +1,7 @@
 import React, { useMemo, useState } from "react";
 import ProductsLists from "./ProductsList";
-import {
-  GoHeart,
-  GoHeartFill,
-} from "react-icons/go";
-import {
-  FaShoppingCart,
-  FaStar,
-} from "react-icons/fa";
+import { GoHeart, GoHeartFill } from "react-icons/go";
+import { FaShoppingCart, FaStar } from "react-icons/fa";
 
 const Products = ({ searchTerm, addToCart, AddToWishlist, wishlist }) => {
   const categories = [
