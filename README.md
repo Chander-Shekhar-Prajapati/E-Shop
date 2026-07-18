@@ -172,11 +172,11 @@ Contributions are welcome.
 
 ## 👨‍💻 Developer
 
-**Chander Shekhar**
+**Chander Shekhar Prajapati**
 
-GitHub: https://github.com/your-github-username
+GitHub: https://github.com/chander-shekhar-prajapati
 
-LinkedIn: https://linkedin.com/in/your-linkedin-username
+LinkedIn: https://linkedin.com/in/chander-shekhar-prajapati-28593b32b
 
 ---
 
