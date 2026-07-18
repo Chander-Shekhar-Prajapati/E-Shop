@@ -1,151 +1,113 @@
-// import React, { useEffect, useState } from "react";
-// import BannerImage from "../../assets/banner.jpg";
-
-// const Banner = () => {
-//   const totalSecond = 5 * 60 * 60;
-//   const [timeLeft, setTimeLeft] = useState(totalSecond);
-
-//   useEffect(() => {
-//     let endTime = localStorage.getItem("saleEndTime");
-
-//     if (!endTime) {
-//       endTime = Date.now() + totalSecond * 1000;
-//       localStorage.setItem("saleEndTime", endTime);
-//     } else {
-//       endTime = parseInt(endTime, 10);
-//     }
-
-//     const timer = setInterval(() => {
-//       const remaining = Math.max(0, Math.floor((endTime - Date.now()) / 1000));
-//       setTimeLeft(remaining);
-
-//       if (remaining <= 0) {
-//         clearInterval(timer);
-//         localStorage.removeItem("saleEndTime");
-//       }
-//     }, 1000);
-
-//     return () => clearInterval(timer);
-//   }, [totalSecond]);
-
-//   const hours = Math.floor(timeLeft / 3600);
-//   const minutes = Math.floor((timeLeft % 3600) / 60);
-//   const seconds = timeLeft % 60;
-
-//   return (
-//     <section
-//       className=" bg-red-300 h-[60vh] mt-[14vh] bg-cover bg-top"
-//       style={{ backgroundImage: `url(${BannerImage})` }}
-//     >
-//       <div className="md:max-w-[1350px] mx-auto p-5 h-100 flex flex-col justify-center">
-//         <h1 className="text-red-600 text-7xl uppercase font-bold tracking-tight ml-[4rem]">
-//           Big Sale!
-//         </h1>
-//         <h2 className="text-zinc-800 text-3xl uppercase font-bold ml-[4rem] mt-8 ">
-//           Up to 50% off
-//         </h2>
-//         {timeLeft > 0 ? (
-//           <div className="text-6xl font-bold text-zinc-800 mt-[3rem] ml-[4rem] flex gap-x-3">
-//             <span className="text-white bg-zinc-800 p-3 rounded-[0.5rem]">
-//               {hours.toString().padStart(2, "0")}
-//             </span>
-//             :
-//             <span className="text-white bg-zinc-800 p-3 rounded-[0.5rem]">
-//               {minutes.toString().padStart(2, "0")}
-//             </span>
-//             :
-//             <span className="text-white bg-zinc-800 p-3 rounded-[0.5rem]">
-//               {seconds.toString().padStart(2, "0")}
-//             </span>
-//           </div>
-//         ) : (
-//           <div className="text-6xl font-bold text-red-700 mt-[3rem] ml-[4rem]">
-//             Sale Ended!
-//           </div>
-//         )}
-//       </div>
-//     </section>
-//   );
-// };
-
-// export default Banner;
-
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import BannerImage from "../../assets/banner.jpg";
 
+const SALE_DURATION = 23 * 60 * 60; // 23 Hours
+
 const Banner = () => {
-  const totalSecond = 23 * 60 * 60;
-  const [timeLeft, setTimeLeft] = useState(totalSecond);
+  const [timeLeft, setTimeLeft] = useState(SALE_DURATION);
 
   useEffect(() => {
-    let endTime = localStorage.getItem("saleEndTime");
+    let saleEndTime = Number(localStorage.getItem("saleEndTime"));
 
-    if (!endTime) {
-      endTime = Date.now() + totalSecond * 1000;
-      localStorage.setItem("saleEndTime", endTime);
-    } else {
-      endTime = parseInt(endTime, 10);
+    if (!saleEndTime) {
+      saleEndTime = Date.now() + SALE_DURATION * 1000;
+      localStorage.setItem("saleEndTime", saleEndTime.toString());
     }
 
-    const timer = setInterval(() => {
-      const remaining = Math.max(0, Math.floor((endTime - Date.now()) / 1000));
+    const updateTimer = () => {
+      const remaining = Math.max(
+        0,
+        Math.floor((saleEndTime - Date.now()) / 1000),
+      );
+
       setTimeLeft(remaining);
 
-      if (remaining <= 0) {
-        clearInterval(timer);
+      if (remaining === 0) {
+        clearInterval(interval);
         localStorage.removeItem("saleEndTime");
       }
-    }, 1000);
+    };
 
-    return () => clearInterval(timer);
-  }, [totalSecond]);
+    updateTimer();
 
-  const hours = Math.floor(timeLeft / 3600);
-  const minutes = Math.floor((timeLeft % 3600) / 60);
-  const seconds = timeLeft % 60;
+    const interval = setInterval(updateTimer, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const { hours, minutes, seconds } = useMemo(() => {
+    return {
+      hours: Math.floor(timeLeft / 3600),
+      minutes: Math.floor((timeLeft % 3600) / 60),
+      seconds: timeLeft % 60,
+    };
+  }, [timeLeft]);
 
   return (
-    <section className="relative h-[60vh] mt-[14vh] flex items-center justify-between overflow-hidden ">
+    <section className="relative mt-[14vh] h-[45vh] sm:h-[55vh] md:h-[65vh] lg:h-[70vh] overflow-hidden">
+      {/* Background Image */}
       <img
         src={BannerImage}
-        alt="Sale Banner"
-        className=" hidden md:block absolute inset-0 w-full h-full object-contain object-center"
+        alt="Big Sale Banner"
+        className="absolute inset-0 w-full h-full object-cover object-center"
       />
 
-      <img
-        src={BannerImage}
-        alt="Sale Banner"
-        className=" block md:hidden absolute inset-0 w-full h-full object-contain object-center"
-      />
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-black/40 md:bg-black/20" />
 
       {/* Content */}
-      <div className="relative text-center md:text-left md:max-w-[1350px] mx-auto p-5">
-        <h1 className="text-red-600 text-4xl md:text-7xl uppercase font-bold tracking-tight">
-          Big Sale!
-        </h1>
-        <h2 className="text-white md:text-zinc-800 text-xl md:text-3xl uppercase font-bold mt-4 md:mt-8">
-          Up to 50% off
-        </h2>
+      <div className="relative z-10 flex items-center h-full">
+        <div className="w-full max-w-[1350px] mx-auto px-5 sm:px-8 lg:px-12">
+          <div className="max-w-xl">
+            <p className="inline-block bg-red-600 text-white px-4 py-1 rounded-full text-xs sm:text-sm font-semibold uppercase tracking-wider">
+              Limited Time Offer
+            </p>
 
-        {timeLeft > 0 ? (
-          <div className="text-3xl md:text-6xl font-bold text-white md:text-zinc-800 mt-6 md:mt-[3rem] flex justify-center md:justify-start gap-x-2 md:gap-x-3">
-            <span className="bg-zinc-800 p-2 md:p-3 rounded-[0.5rem] text-white">
-              {hours.toString().padStart(2, "0")}
-            </span>
-            :
-            <span className="bg-zinc-800 p-2 md:p-3 rounded-[0.5rem] text-white">
-              {minutes.toString().padStart(2, "0")}
-            </span>
-            :
-            <span className="bg-zinc-800 p-2 md:p-3 rounded-[0.5rem] text-white">
-              {seconds.toString().padStart(2, "0")}
-            </span>
+            <h1 className="mt-4 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold uppercase text-white leading-tight">
+              Big Sale!
+            </h1>
+
+            <h2 className="mt-3 text-lg sm:text-2xl md:text-3xl font-semibold uppercase text-white">
+              Up to <span className="text-red-500">50% OFF</span>
+            </h2>
+
+            {timeLeft > 0 ? (
+              <div className="flex items-center gap-2 sm:gap-3 mt-8">
+                {[hours, minutes, seconds].map((value, index) => (
+                  <React.Fragment key={index}>
+                    <div className="flex flex-col items-center">
+                      <span className="bg-white text-zinc-900 rounded-lg shadow-lg px-3 py-2 sm:px-5 sm:py-3 text-2xl sm:text-4xl md:text-5xl font-bold min-w-[60px] sm:min-w-[90px] text-center">
+                        {String(value).padStart(2, "0")}
+                      </span>
+
+                      <span className="text-white text-[10px] sm:text-xs uppercase mt-2 tracking-widest">
+                        {index === 0
+                          ? "Hours"
+                          : index === 1
+                            ? "Minutes"
+                            : "Seconds"}
+                      </span>
+                    </div>
+
+                    {index < 2 && (
+                      <span className="text-white text-2xl sm:text-4xl md:text-5xl font-bold -mt-6">
+                        :
+                      </span>
+                    )}
+                  </React.Fragment>
+                ))}
+              </div>
+            ) : (
+              <h3 className="mt-8 text-3xl sm:text-5xl font-bold text-red-500">
+                Sale Ended!
+              </h3>
+            )}
+
+            <button className="mt-8 bg-red-600 hover:bg-red-700 transition-all duration-300 text-white px-6 py-3 rounded-lg font-semibold text-base sm:text-lg shadow-lg">
+              Shop Now →
+            </button>
           </div>
-        ) : (
-          <div className="text-3xl md:text-6xl font-bold text-red-700 mt-6 md:mt-[3rem]">
-            Sale Ended!
-          </div>
-        )}
+        </div>
       </div>
     </section>
   );

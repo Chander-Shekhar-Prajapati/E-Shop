@@ -1,135 +1,13 @@
-// import React, { useState } from "react";
-// import ProductsLists from "./ProductsList";
-// import { GoHeartFill } from "react-icons/go";
-
-// const Products = ({ searchTerm, addToCart, AddToWishlist, wishlist }) => {
-//   const categories = [
-//     "All",
-//     "Mens",
-//     "Women",
-//     "Kids",
-//     "New Arrivals",
-//     "On Sale",
-//   ];
-
-//   const [activeTab, setActiveTab] = useState("All");
-
-//   const filteredItem = ProductsLists.filter((item) => {
-//     const result = activeTab === "All" || activeTab === item.cate;
-
-//     const matchesSearch = item.name
-//       .toLowerCase()
-//       .includes(searchTerm.toLowerCase());
-
-//     return result && matchesSearch;
-//   });
-
-//   const renderProducts = filteredItem.map((product) => {
-//     return (
-//       <div className="bg-zinc-100 rounded-[.4rem] mt-5 p-3" key={product.id}>
-//         <div className="flex justify-between">
-//           <button
-//             className={`text-3xl cursor-pointer ${
-//               wishlist.some((item) => item.id === product.id)
-//                 ? "text-red-600"
-//                 : "text-zinc-700"
-//             }`}
-//             onClick={() => AddToWishlist(product)}
-//           >
-//             <GoHeartFill />
-//           </button>
-
-//           <div>
-//             {
-//               <span
-//                 className={`px-3 py-1 rounded-[.5rem] ${
-//                   product.onSale
-//                     ? "bg-red-600"
-//                     : product.NewArrival
-//                     ? "bg-green-600"
-//                     : "bg-pink-500"
-//                 }`}
-//               >
-//                 {product.onSale ? "Sale" : product.NewArrival ? "New" : "Old"}
-//               </span>
-//             }
-//           </div>
-//         </div>
-
-//         {/* image */}
-//         <div className="bg-red-100 w-full h-[30vh] mt-5 rounded-lg  m-auto">
-//           <img
-//             src={product.Image}
-//             alt="Product image"
-//             className="w-full h-full object-contain"
-//           />
-//         </div>
-
-//         <div className="text-center p-2">
-//           <h3 className="text-lg font-bold">{product.name}</h3>
-//           <div className="flex justify-around">
-//             <span className="line-through text-[.8rem]">
-//               ₹{product.oldPrice.toFixed(2)}
-//             </span>{" "}
-//             <span className="font-bold text-red-700">
-//               ₹{product.price.toFixed(2)}
-//             </span>
-//           </div>
-//           <button
-//             className="bg-blue-600 text-white text-lg py-2 w-full mt-3 rounded-full cursor-pointer active:bg-blue-700"
-//             onClick={() => addToCart(product)}
-//           >
-//             Add to cart
-//           </button>
-//         </div>
-//       </div>
-//     );
-//   });
-
-//   return (
-//     <section
-//       id="product-section"
-//       className="max-w-[1350px] mx-auto px-12 py-12 "
-//     >
-//       <div className="flex gap-2 justify-center items-center  mt-8">
-//         {categories.map((cate) => {
-//           return (
-//             <button
-//               key={cate}
-//               className={`px-8 py-2 rounded-full text-lg cursor-pointer
-//                 ${
-//                   activeTab === cate
-//                     ? "bg-blue-500 text-white"
-//                     : "bg-zinc-100 text-zinc-800"
-//                 }`}
-//               onClick={() => setActiveTab(cate)}
-//             >
-//               {cate}
-//             </button>
-//           );
-//         })}
-//       </div>
-
-//       {/* ProductsListing */}
-
-//       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-9">
-//         {filteredItem.length === 0 ? (
-//           <p className="w-[80vw] text-center p-10 mt-2 text-[1.4rem]">
-//             Oops! No Products Found...{" "}
-//           </p>
-//         ) : (
-//           renderProducts
-//         )}
-//       </div>
-//     </section>
-//   );
-// };
-
-// export default Products;
-
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import ProductsLists from "./ProductsList";
-import { GoHeartFill } from "react-icons/go";
+import {
+  GoHeart,
+  GoHeartFill,
+} from "react-icons/go";
+import {
+  FaShoppingCart,
+  FaStar,
+} from "react-icons/fa";
 
 const Products = ({ searchTerm, addToCart, AddToWishlist, wishlist }) => {
   const categories = [
@@ -143,114 +21,169 @@ const Products = ({ searchTerm, addToCart, AddToWishlist, wishlist }) => {
 
   const [activeTab, setActiveTab] = useState("All");
 
-  const filteredItem = ProductsLists.filter((item) => {
-    const result = activeTab === "All" || activeTab === item.cate;
+  /* Filter Products */
+  const filteredProducts = useMemo(() => {
+    return ProductsLists.filter((item) => {
+      const categoryMatch = activeTab === "All" || item.cate === activeTab;
 
-    const matchesSearch = item.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
+      const searchMatch = item.name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
 
-    return result && matchesSearch;
-  });
+      return categoryMatch && searchMatch;
+    });
+  }, [activeTab, searchTerm]);
 
-  const renderProducts = filteredItem.map((product) => {
-    return (
-      <div className="bg-zinc-100 rounded-[.4rem] mt-5 p-3" key={product.id}>
-        <div className="flex justify-between">
-          {/* Wishlist button */}
-          <button
-            className={`text-3xl cursor-pointer ${
-              wishlist.some((item) => item.id === product.id)
-                ? "text-red-600"
-                : "text-zinc-700"
-            }`}
-            onClick={() => AddToWishlist(product)}
-          >
-            <GoHeartFill />
-          </button>
+  /* Wishlist Check */
+  const isWishlisted = (id) => {
+    return wishlist.some((item) => item.id === id);
+  };
 
-          {/* Tag */}
-          <div>
-            <span
-              className={`px-3 py-1 rounded-[.5rem] ${
-                product.onSale
-                  ? "bg-red-600"
-                  : product.NewArrival
-                  ? "bg-green-600"
-                  : "bg-pink-500"
-              }`}
-            >
-              {product.onSale ? "Sale" : product.NewArrival ? "New" : "Old"}
-            </span>
-          </div>
-        </div>
+  /* Discount Percentage */
+  const getDiscount = (oldPrice, newPrice) => {
+    return Math.round(((oldPrice - newPrice) / oldPrice) * 100);
+  };
+  /* Product Card */
+  const renderProducts = filteredProducts.map((product) => (
+    <div
+      key={product.id}
+      className="group overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+    >
+      {/* Image */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-slate-100 via-white to-blue-50 h-72 flex items-center justify-center">
+        {/* Discount Badge */}
+        <span className="absolute left-4 top-4 z-20 rounded-full bg-red-600 px-3 py-1 text-xs font-bold text-white">
+          {getDiscount(product.oldPrice, product.price)}% OFF
+        </span>
 
-        {/* Product Image */}
-        <div className="bg-red-100 w-full h-[30vh] mt-5 rounded-lg m-auto">
-          <img
-            src={product.Image}
-            alt="Product"
-            className="w-full h-full object-contain"
-          />
-        </div>
+        {/* Wishlist */}
+        <button
+          onClick={() => AddToWishlist(product)}
+          className="absolute right-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-md transition hover:scale-110"
+        >
+          {isWishlisted(product.id) ? (
+            <GoHeartFill className="text-2xl text-red-500" />
+          ) : (
+            <GoHeart className="text-2xl text-zinc-600" />
+          )}
+        </button>
 
-        {/* Details */}
-        <div className="text-center p-2">
-          <h3 className="text-lg font-bold">{product.name}</h3>
-          <div className="flex justify-around">
-            <span className="line-through text-[.8rem]">
-              ₹{product.oldPrice.toFixed(2)}
-            </span>
-            <span className="font-bold text-red-700">
-              ₹{product.price.toFixed(2)}
-            </span>
-          </div>
-          <button
-            className="bg-blue-600 text-white text-lg py-2 w-full mt-3 rounded-full cursor-pointer active:bg-blue-700"
-            onClick={() => addToCart(product)}
-          >
-            Add to cart
-          </button>
-        </div>
+        <img
+          src={product.Image}
+          alt={product.name}
+          className="h-56 object-contain transition duration-500 group-hover:scale-110"
+        />
       </div>
-    );
-  });
 
+      {/* Details */}
+      <div className="p-5">
+        <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-600">
+          {product.cate}
+        </span>
+
+        <h3 className="mt-4 line-clamp-2 text-lg font-bold text-zinc-800">
+          {product.name}
+        </h3>
+
+        {/* Rating */}
+        <div className="mt-3 flex items-center gap-1">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <FaStar key={star} className="text-sm text-yellow-400" />
+          ))}
+
+          <span className="ml-2 text-sm text-zinc-500">4.8</span>
+        </div>
+
+        {/* Price */}
+        <div className="mt-4 flex items-center gap-3">
+          <span className="text-2xl font-bold text-blue-600">
+            ₹{product.price.toFixed(2)}
+          </span>
+
+          <span className="text-sm text-zinc-400 line-through">
+            ₹{product.oldPrice.toFixed(2)}
+          </span>
+        </div>
+
+        {/* Button */}
+        <button
+          onClick={() => addToCart(product)}
+          className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700"
+        >
+          <FaShoppingCart />
+          Add to Cart
+        </button>
+      </div>
+    </div>
+  ));
   return (
     <section
       id="product-section"
-      className="max-w-[1350px] mx-auto px-4 md:px-12 py-12"
+      className="mx-auto max-w-[1400px] px-4 py-16 md:px-8 lg:px-12"
     >
-      {/* Categories with scroll on mobile */}
-      <div className="flex gap-2 justify-start items-center mt-8 overflow-x-auto whitespace-nowrap scrollbar-hide">
-        {categories.map((cate) => {
-          return (
-            <button
-              key={cate}
-              className={`px-6 py-2 rounded-full text-base md:text-lg cursor-pointer flex-shrink-0
-                ${
-                  activeTab === cate
-                    ? "bg-blue-500 text-white"
-                    : "bg-zinc-100 text-zinc-800"
-                }`}
-              onClick={() => setActiveTab(cate)}
-            >
-              {cate}
-            </button>
-          );
-        })}
+      {/* Heading */}
+      <div className="mb-12 text-center">
+        <span className="rounded-full bg-blue-100 px-4 py-2 text-sm font-semibold text-blue-600">
+          Our Collection
+        </span>
+
+        <h2 className="mt-5 text-4xl font-bold text-zinc-900">
+          Featured Products
+        </h2>
+
+        <p className="mx-auto mt-4 max-w-2xl text-zinc-500">
+          Explore our latest fashion collection with premium quality and
+          exclusive discounts.
+        </p>
       </div>
 
-      {/* Products Listing */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-9 mt-6">
-        {filteredItem.length === 0 ? (
-          <p className="w-[80vw] text-center p-10 mt-2 text-[1.4rem]">
-            Oops! No Products Found...
-          </p>
-        ) : (
-          renderProducts
-        )}
+      {/* Categories */}
+
+      <div className="mb-10 flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+        {categories.map((cate) => (
+          <button
+            key={cate}
+            onClick={() => setActiveTab(cate)}
+            className={`whitespace-nowrap rounded-full px-6 py-3 font-semibold transition-all duration-300 ${
+              activeTab === cate
+                ? "bg-blue-600 text-white shadow-lg"
+                : "border border-zinc-200 bg-white text-zinc-700 hover:border-blue-600 hover:text-blue-600"
+            }`}
+          >
+            {cate}
+          </button>
+        ))}
       </div>
+
+      {/* Products Grid */}
+
+      <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {filteredProducts.length > 0 && renderProducts}
+      </div>
+      {/* Empty State */}
+      {filteredProducts.length === 0 && (
+        <div className="col-span-full flex flex-col items-center justify-center rounded-3xl border border-dashed border-zinc-300 bg-zinc-50 py-20">
+          <div className="flex h-24 w-24 items-center justify-center rounded-full bg-blue-100 text-5xl">
+            🔍
+          </div>
+
+          <h3 className="mt-6 text-3xl font-bold text-zinc-800">
+            No Products Found
+          </h3>
+
+          <p className="mt-3 max-w-md text-center leading-7 text-zinc-500">
+            We couldn't find any products matching your search. Try another
+            keyword or choose a different category.
+          </p>
+
+          <button
+            onClick={() => setActiveTab("All")}
+            className="mt-8 rounded-xl bg-blue-600 px-8 py-3 font-semibold text-white transition hover:bg-blue-700"
+          >
+            View All Products
+          </button>
+        </div>
+      )}
     </section>
   );
 };

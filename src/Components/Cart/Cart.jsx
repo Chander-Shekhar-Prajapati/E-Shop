@@ -1,151 +1,6 @@
-// import React from "react";
-// import { FaMinus, FaPlus, FaShoppingCart, FaTrash } from "react-icons/fa";
-
-// const Cart = ({
-//   activePanel,
-//   closePanel,
-//   cart,
-//   removeItem,
-//   QuantityIncrement,
-//   QuantityDisIncrement,
-//   subTotal,
-//   shippingFee,
-//   orderTotal,
-//   setOrderSummary,
-// }) => {
-//   return (
-//     <div
-//       className={` flex flex-col justify-between gap-5 bg-zinc-100 fixed top-0 right-0 bottom-0 left-auto w-[400px] z-51 border-l border-zinc-300 py-7 transform transition-transform duration-300 ${
-//         activePanel === "cart" ? "translate-x-0" : "translate-x-full"
-//       }`}
-//     >
-//       <div className="px-10">
-//         <h3 className="text-3xl font-bold text-zinc-800 text-center">
-//           Your Card
-//         </h3>
-//       </div>
-
-//       {/* card item */}
-//       <div className="flex-1 flex-col gap-2 overflow-y-auto scroll">
-//         {cart.length === 0 ? (
-//           <div className="flex justify-center items-center gap-2 font-bold ">
-//             <span className="flex justify-center items-center w-12 h-12">
-//               <FaShoppingCart className="text-[2rem]" />
-//             </span>
-//             <p>Your Cart is Empty...</p>
-//           </div>
-//         ) : (
-//           cart.map((product, inx) => {
-//             return (
-//               <div
-//                 className={`flex items-center gap-3 px-3 py-1 border-y-1 border-zinc-300 ${
-//                   inx % 2 === 0 ? "bg-white" : "bg-blue-100"
-//                 }`}
-//                 key={product.id}
-//               >
-//                 <div className="w-20 h-20  rounded-[.4rem]">
-//                   {/* card image */}
-//                   <img
-//                     src={product.Image}
-//                     alt="cloth"
-//                     className="w-full h-full object-contain "
-//                   />
-//                 </div>
-
-//                 {/* product detail */}
-
-//                 <div className="flex-1">
-//                   <div className="flex justify-between">
-//                     <h4 className="font-semibold text-zinc-800 text-lg">
-//                       {product.name}
-//                     </h4>
-//                     <button
-//                       className="flex w-8 h-8 rounded-full text-white bg-red-600 justify-center items-center active:bg-red-700 mr-7"
-//                       onClick={() => removeItem(product)}
-//                     >
-//                       <FaTrash />
-//                     </button>
-//                   </div>
-
-//                   <div className="flex justify-between mt-2">
-//                     <div className="flex gap-4">
-//                       <span className="line-through text-[.8rem]">
-//                         ₹{product.oldPrice.toFixed(2)}
-//                       </span>{" "}
-//                       <span className="font-bold text-red-700">
-//                         ₹{(product.price * product.quantity).toFixed(2)}
-//                       </span>
-//                     </div>
-
-//                     <div className="flex gap-2">
-//                       <button
-//                         className="flex w-8 h-8 rounded-full text-white bg-blue-600 justify-center items-center text-[.7rem] cursor-pointer active:bg-blue-700"
-//                         onClick={() => QuantityDisIncrement(product)}
-//                       >
-//                         <FaMinus />
-//                       </button>
-//                       <span className="text-xl">{product.quantity}</span>
-//                       <button
-//                         className="flex w-8 h-8 rounded-full text-white bg-blue-600 justify-center items-center text-[.7rem] cursor-pointer active:bg-blue-700"
-//                         onClick={() => QuantityIncrement(product)}
-//                       >
-//                         <FaPlus />
-//                       </button>
-//                     </div>
-//                   </div>
-//                 </div>
-//               </div>
-//             );
-//           })
-//         )}
-//       </div>
-
-//       {/* card total */}
-//       <div className="px-10 border-y border-zinc-300 ">
-//         <div className="flex justify-between mt-1">
-//           <span className=" text-zinc-800">Sub Total</span>
-//           <span className=" text-zinc-800">₹ {subTotal.toFixed(2)}</span>
-//         </div>
-//         <div className="flex justify-between mt-1">
-//           <span className=" text-zinc-800">Shipping & Handlings</span>
-//           <span className=" text-zinc-800">₹ {shippingFee.toFixed(2)}</span>
-//         </div>
-//         <div className="flex justify-between mt-1 border-t border-zinc-300">
-//           <span className="text-lg text-blue-600 font-bold">Order Total</span>
-//           <span className="text-lg text-blue-600 font-bold">
-//             ₹ {orderTotal.toFixed(2)}
-//           </span>
-//         </div>
-//       </div>
-
-//       {/* button */}
-//       <div className="flex gap-x-2">
-//         <button
-//           className={`bg-blue-600 text-white flex-1 h-[7vh] rounded-full mx-1 cursor-pointer active:bg-blue-700 `}
-//           onClick={closePanel}
-//         >
-//           Close
-//         </button>
-//         <button
-//           className={` text-white flex-1 h-[7vh] rounded-full mx-1  ${
-//             cart.length === 0
-//               ? "bg-gray-400 cursor-not-allowed"
-//               : "bg-blue-600 cursor-pointer active:bg-blue-700"
-//           }`}
-//           disabled={cart.length === 0}
-//           onClick={() => setOrderSummary(true)}
-//         >
-//           CheckOut
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Cart;
-
 import React from "react";
 import { FaMinus, FaPlus, FaShoppingCart, FaTrash } from "react-icons/fa";
+import { IoClose } from "react-icons/io5";
 
 const Cart = ({
   activePanel,
@@ -159,140 +14,197 @@ const Cart = ({
   orderTotal,
   setOrderSummary,
 }) => {
+  const isOpen = activePanel === "cart";
+
   return (
-    <div
-      className={`
-  flex flex-col justify-between gap-5 bg-zinc-100 fixed z-50 border-zinc-300 py-7 
-  transform transition-transform duration-300
+    <>
+      {/* Overlay */}
+      <div
+        onClick={closePanel}
+        className={`fixed inset-0 z-40 bg-black/40 backdrop-blur-sm transition-all duration-300 ${
+          isOpen ? "opacity-100 visible" : "opacity-0 invisible"
+        }`}
+      />
 
-  /* ✅ Desktop → Right Drawer */
-  md:top-0 md:right-0 md:bottom-0 md:left-auto md:w-[400px] md:h-full md:border-l
-  ${activePanel === "cart" ? "md:translate-x-0" : "md:translate-x-full"}
+      {/* Drawer */}
+      <aside
+        className={`
+        fixed z-50 bg-white shadow-2xl
+        flex flex-col
+        transition-all duration-500 ease-in-out
 
-  /* ✅ Mobile → Bottom Drawer */
-  top-auto bottom-0 left-0 right-0 h-[80vh] border-t md:border-0
-  ${
-    activePanel === "cart"
-      ? "translate-y-0 md:translate-y-0"
-      : "translate-y-full md:translate-y-0"
-  }
-`}
-    >
-      <div className="px-10">
-        <h3 className="text-3xl font-bold text-zinc-800 text-center">
-          Your Cart
-        </h3>
-      </div>
+        /* Desktop */
+        md:top-0 md:right-0 md:h-screen md:w-[430px]
+        ${isOpen ? "md:translate-x-0" : "md:translate-x-full"}
 
-      {/* card item */}
-      <div className="flex-1 flex-col gap-2 overflow-y-auto scroll px-3">
-        {cart.length === 0 ? (
-          <div className="flex justify-center items-center gap-2 font-bold">
-            <span className="flex justify-center items-center w-12 h-12">
-              <FaShoppingCart className="text-[2rem]" />
-            </span>
-            <p>Your Cart is Empty...</p>
+        /* Mobile */
+        left-0 right-0 bottom-0
+        h-[88vh]
+        rounded-t-[28px]
+        ${isOpen ? "translate-y-0" : "translate-y-full"}
+        `}
+      >
+        {/* Drag Handle (Mobile) */}
+        <div className="md:hidden flex justify-center pt-3">
+          <div className="w-14 h-1.5 rounded-full bg-zinc-300"></div>
+        </div>
+
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-5 border-b border-zinc-200">
+          <div>
+            <h2 className="text-2xl font-bold text-zinc-800">Shopping Cart</h2>
+
+            <p className="text-sm text-zinc-500 mt-1">
+              {cart.length} Item
+              {cart.length !== 1 && "s"} in your cart
+            </p>
           </div>
-        ) : (
-          cart.map((product, inx) => (
-            <div
-              className={`flex items-center gap-3 px-3 py-1 border-y-1 border-zinc-300 ${
-                inx % 2 === 0 ? "bg-white" : "bg-blue-100"
-              }`}
-              key={product.id}
-            >
-              <div className="w-20 h-20 rounded-[.4rem]">
-                <img
-                  src={product.Image}
-                  alt="cloth"
-                  className="w-full h-full object-contain"
-                />
+
+          <button
+            onClick={closePanel}
+            className="w-10 h-10 rounded-full bg-zinc-100 hover:bg-red-500 hover:text-white transition flex items-center justify-center"
+          >
+            <IoClose size={24} />
+          </button>
+        </div>
+
+        {/* Cart Items */}
+        <div className="flex-1 overflow-y-auto px-4 py-5 space-y-4">
+          {cart.length === 0 ? (
+            <div className="h-full flex flex-col items-center justify-center text-center">
+              <div className="w-24 h-24 rounded-full bg-blue-100 flex items-center justify-center">
+                <FaShoppingCart className="text-5xl text-blue-600" />
               </div>
 
-              <div className="flex-1">
-                <div className="flex justify-between">
-                  <h4 className="font-semibold text-zinc-800 text-lg">
-                    {product.name}
-                  </h4>
-                  <button
-                    className="flex w-8 h-8 rounded-full text-white bg-red-600 justify-center items-center active:bg-red-700 mr-3"
-                    onClick={() => removeItem(product)}
-                  >
-                    <FaTrash />
-                  </button>
-                </div>
+              <h3 className="text-2xl font-bold mt-6">Your Cart is Empty</h3>
 
-                <div className="flex justify-between mt-2">
-                  <div className="flex gap-4">
-                    <span className="line-through text-[.8rem]">
-                      ₹{product.oldPrice.toFixed(2)}
-                    </span>
-                    <span className="font-bold text-red-700">
-                      ₹{(product.price * product.quantity).toFixed(2)}
-                    </span>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <button
-                      className="flex w-8 h-8 rounded-full text-white bg-blue-600 justify-center items-center text-[.7rem] cursor-pointer active:bg-blue-700"
-                      onClick={() => QuantityDisIncrement(product)}
-                    >
-                      <FaMinus />
-                    </button>
-                    <span className="text-xl">{product.quantity}</span>
-                    <button
-                      className="flex w-8 h-8 rounded-full text-white bg-blue-600 justify-center items-center text-[.7rem] cursor-pointer active:bg-blue-700"
-                      onClick={() => QuantityIncrement(product)}
-                    >
-                      <FaPlus />
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <p className="text-zinc-500 mt-2">
+                Looks like you haven't added anything yet.
+              </p>
             </div>
-          ))
-        )}
-      </div>
+          ) : (
+            cart.map((product) => (
+              <div
+                key={product.id}
+                className="group flex gap-4 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm hover:shadow-lg transition-all duration-300"
+              >
+                {/* Product Image */}
+                <div className="w-24 h-24 rounded-xl overflow-hidden bg-zinc-100 flex-shrink-0">
+                  <img
+                    src={product.Image}
+                    alt={product.name}
+                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
 
-      {/* card total */}
-      <div className="px-10 border-y border-zinc-300">
-        <div className="flex justify-between mt-1">
-          <span className="text-zinc-800">Sub Total</span>
-          <span className="text-zinc-800">₹ {subTotal.toFixed(2)}</span>
-        </div>
-        <div className="flex justify-between mt-1">
-          <span className="text-zinc-800">Shipping & Handlings</span>
-          <span className="text-zinc-800">₹ {shippingFee.toFixed(2)}</span>
-        </div>
-        <div className="flex justify-between mt-1 border-t border-zinc-300">
-          <span className="text-lg text-blue-600 font-bold">Order Total</span>
-          <span className="text-lg text-blue-600 font-bold">
-            ₹ {orderTotal.toFixed(2)}
-          </span>
-        </div>
-      </div>
+                {/* Product Details */}
+                <div className="flex-1 flex flex-col justify-between">
+                  <div className="flex justify-between gap-3">
+                    <div>
+                      <h4 className="font-semibold text-zinc-800 line-clamp-2">
+                        {product.name}
+                      </h4>
 
-      {/* button */}
-      <div className="flex gap-x-2 px-3">
-        <button
-          className="bg-blue-600 text-white flex-1 h-[7vh] rounded-full mx-1 cursor-pointer active:bg-blue-700"
-          onClick={closePanel}
-        >
-          Close
-        </button>
-        <button
-          className={`text-white flex-1 h-[7vh] rounded-full mx-1 ${
-            cart.length === 0
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-600 cursor-pointer active:bg-blue-700"
-          }`}
-          disabled={cart.length === 0}
-          onClick={() => setOrderSummary(true)}
-        >
-          CheckOut
-        </button>
-      </div>
-    </div>
+                      <div className="flex items-center gap-2 mt-2">
+                        <span className="text-red-600 font-bold text-lg">
+                          ₹{(product.price * product.quantity).toFixed(2)}
+                        </span>
+
+                        <span className="text-sm text-zinc-400 line-through">
+                          ₹{product.oldPrice.toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Delete */}
+                    <button
+                      onClick={() => removeItem(product)}
+                      className="w-9 h-9 rounded-full bg-red-100 text-red-600 hover:bg-red-600 hover:text-white transition flex items-center justify-center"
+                    >
+                      <FaTrash size={14} />
+                    </button>
+                  </div>
+
+                  {/* Quantity */}
+                  <div className="flex items-center justify-between mt-4">
+                    <div className="flex items-center rounded-full border border-zinc-300 overflow-hidden">
+                      <button
+                        onClick={() => QuantityDisIncrement(product)}
+                        className="w-10 h-10 flex items-center justify-center hover:bg-zinc-100 transition"
+                      >
+                        <FaMinus size={12} />
+                      </button>
+
+                      <span className="w-10 text-center font-semibold">
+                        {product.quantity}
+                      </span>
+
+                      <button
+                        onClick={() => QuantityIncrement(product)}
+                        className="w-10 h-10 flex items-center justify-center hover:bg-zinc-100 transition"
+                      >
+                        <FaPlus size={12} />
+                      </button>
+                    </div>
+
+                    <span className="text-sm text-zinc-500">
+                      ₹{product.price.toFixed(2)} / item
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+        {/* Footer / Order Summary */}
+        <div className="border-t border-zinc-200 bg-white p-5 shadow-[0_-6px_20px_rgba(0,0,0,0.06)]">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between text-zinc-600">
+              <span>Subtotal</span>
+              <span className="font-medium">₹ {subTotal.toFixed(2)}</span>
+            </div>
+
+            <div className="flex items-center justify-between text-zinc-600">
+              <span>Shipping</span>
+              <span className="font-medium">₹ {shippingFee.toFixed(2)}</span>
+            </div>
+
+            <div className="flex items-center justify-between border-t pt-3">
+              <span className="text-lg font-bold text-zinc-800">Total</span>
+
+              <span className="text-2xl font-bold text-blue-600">
+                ₹ {orderTotal.toFixed(2)}
+              </span>
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div className="mt-6 grid grid-cols-2 gap-3">
+            <button
+              onClick={closePanel}
+              className="h-12 rounded-xl border border-zinc-300 font-semibold text-zinc-700 hover:bg-zinc-100 transition"
+            >
+              Continue Shopping
+            </button>
+
+            <button
+              disabled={cart.length === 0}
+              onClick={() => {
+                closePanel();
+                setOrderSummary(true);
+              }}
+              className={`h-12 rounded-xl font-semibold text-white transition ${
+                cart.length === 0
+                  ? "bg-zinc-400 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700"
+              }`}
+            >
+              Checkout
+            </button>
+          </div>
+        </div>
+      </aside>
+    </>
   );
 };
 

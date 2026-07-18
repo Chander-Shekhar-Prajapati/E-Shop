@@ -1,135 +1,157 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import NavBar from "../NavBar/NavBar";
 import Banner from "../Banner/Banner";
 import Products from "../Products/Products";
 import Cart from "../Cart/Cart";
 import Wishlist from "../Wishlist/Wishlist";
 import OrderSummary from "../OrderSummary/OrderSummary";
-import OrderPlace from "./../OrderPlace/OrderPlace";
+import OrderPlace from "../OrderPlace/OrderPlace";
 import Footer from "../Footer/footer";
 
 const Home = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isScrolled, setIsScrolled] = useState(false);
   const [activePanel, setActivePanel] = useState(null);
-  const [cart, setCart] = useState(() => {
-    const storeCart = localStorage.getItem("cart");
-    return storeCart ? JSON.parse(storeCart) : [];
-  });
   const [orderSummary, setOrderSummary] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
-  const [wishlist, setWishlist] = useState(() => {
-    const storeCart = localStorage.getItem("wishlist");
-    return storeCart ? JSON.parse(storeCart) : [];
+
+  const [cart, setCart] = useState(() => {
+    const storedCart = localStorage.getItem("cart");
+    return storedCart ? JSON.parse(storedCart) : [];
   });
 
-  //Total calculations
-  const subTotal = cart.reduce(
-    (acc, curr) => acc + curr.price * curr.quantity,
-    0
-  );
+  const [wishlist, setWishlist] = useState(() => {
+    const storedWishlist = localStorage.getItem("wishlist");
+    return storedWishlist ? JSON.parse(storedWishlist) : [];
+  });
 
-  // totalItem
-  const totalItem = cart.reduce((acc, curr) => acc + curr.quantity, 0);
-
-  // shippingFee
-  const shippingFee = totalItem * 2;
-
-  // totalAmount
-  const orderTotal = shippingFee + subTotal;
+  /* ---------------- Scroll Effect ---------------- */
 
   useEffect(() => {
-    const changeNavBar = () => {
+    const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
 
-    window.addEventListener("scroll", changeNavBar);
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // save item to localStorage
+  /* ---------------- LocalStorage ---------------- */
+
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
+
+  useEffect(() => {
     localStorage.setItem("wishlist", JSON.stringify(wishlist));
-  }, [cart, wishlist]);
+  }, [wishlist]);
 
-  // handel Scroll
-  const handelScroll = () => {
-    const section = document.getElementById("product-section");
-    if (section) {
-      section.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+  /* ---------------- Calculations ---------------- */
 
-  // cart and wishlist ShowTab function
+  const subTotal = useMemo(() => {
+    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  }, [cart]);
 
-  const handelPanel = (tabName) => {
-    setActivePanel((prev) => (prev === tabName ? null : tabName));
-  };
+  const totalItem = useMemo(() => {
+    return cart.reduce((total, item) => total + item.quantity, 0);
+  }, [cart]);
 
-  // cart and wishlist HideTab function
+  const shippingFee = useMemo(() => {
+    return totalItem * 2;
+  }, [totalItem]);
 
-  const closePanel = () => {
+  const orderTotal = useMemo(() => {
+    return subTotal + shippingFee;
+  }, [subTotal, shippingFee]);
+
+  /* ---------------- Scroll To Products ---------------- */
+
+  const handelScroll = useCallback(() => {
+    document
+      .getElementById("product-section")
+      ?.scrollIntoView({ behavior: "smooth" });
+  }, []);
+
+  /* ---------------- Panels ---------------- */
+
+  const handelPanel = useCallback((panel) => {
+    setActivePanel((prev) => (prev === panel ? null : panel));
+  }, []);
+
+  const closePanel = useCallback(() => {
     setActivePanel(null);
-  };
+  }, []);
 
-  // removeItem
-  const removeItem = (product) => {
-    setCart(cart.filter((item) => item.id !== product.id));
-  };
+  /* ---------------- Cart ---------------- */
 
-  // QuantityIncrement
+  const addToCart = useCallback((product) => {
+    setCart((prevCart) => {
+      const exist = prevCart.find((item) => item.id === product.id);
 
-  const QuantityIncrement = (product) => {
-    setCart(
-      cart.map((item) =>
-        item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-      )
+      if (exist) {
+        alert("Item already added to cart.");
+        return prevCart;
+      }
+
+      return [...prevCart, { ...product, quantity: 1 }];
+    });
+  }, []);
+
+  const removeItem = useCallback((product) => {
+    setCart((prevCart) => prevCart.filter((item) => item.id !== product.id));
+  }, []);
+
+  const QuantityIncrement = useCallback((product) => {
+    setCart((prevCart) =>
+      prevCart.map((item) =>
+        item.id === product.id
+          ? {
+              ...item,
+              quantity: item.quantity + 1,
+            }
+          : item,
+      ),
     );
-  };
+  }, []);
 
-  // quantityDisIncrement
-
-  const QuantityDisIncrement = (product) => {
-    setCart(
-      cart.map((item) =>
+  const QuantityDisIncrement = useCallback((product) => {
+    setCart((prevCart) =>
+      prevCart.map((item) =>
         item.id === product.id && item.quantity > 1
-          ? { ...item, quantity: item.quantity - 1 }
-          : item
-      )
+          ? {
+              ...item,
+              quantity: item.quantity - 1,
+            }
+          : item,
+      ),
     );
-  };
+  }, []);
 
-  // Add to card function
+  /* ---------------- Wishlist ---------------- */
 
-  const addToCart = (product) => {
-    const alreadyAdd = cart.find((item) => item.id === product.id);
+  const AddToWishlist = useCallback((product) => {
+    setWishlist((prevWishlist) => {
+      const exist = prevWishlist.find((item) => item.id === product.id);
 
-    if (alreadyAdd) {
-      alert("Item Already Added in Cart");
-      return;
-    }
+      if (exist) {
+        return prevWishlist.filter((item) => item.id !== product.id);
+      }
 
-    setCart([...cart, { ...product, quantity: 1 }]);
-  };
+      return [
+        ...prevWishlist,
+        {
+          ...product,
+          addDate: new Date().toLocaleDateString(),
+          addTime: new Date().toLocaleTimeString(),
+        },
+      ];
+    });
+  }, []);
 
-  // wishlist
-  const AddToWishlist = (product) => {
-    const alreadyAdd = wishlist.find((item) => item.id === product.id);
-
-    if (alreadyAdd) {
-      setWishlist(wishlist.filter((item) => item.id !== product.id));
-    } else {
-      const addDate = new Date().toLocaleDateString();
-      const addTime = new Date().toLocaleTimeString();
-      setWishlist([...wishlist, { ...product, addDate, addTime }]);
-    }
-  };
-
-  // clear wishlist
-  const clearWishlist = () => {
+  const clearWishlist = useCallback(() => {
     setWishlist([]);
-  };
-
+  }, []);
   return (
     <>
       <NavBar
@@ -140,7 +162,9 @@ const Home = () => {
         totalItem={totalItem}
         wishlist={wishlist}
       />
+
       <Banner />
+
       <Products
         searchTerm={searchTerm}
         addToCart={addToCart}
@@ -181,8 +205,6 @@ const Home = () => {
           setCart={setCart}
         />
       )}
-
-      {/* OrderPlace */}
 
       {orderPlaced && <OrderPlace setOrderPlace={setOrderPlaced} />}
 

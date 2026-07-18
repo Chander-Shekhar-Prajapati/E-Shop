@@ -1,5 +1,6 @@
 import React from "react";
 import { GoHeartFill } from "react-icons/go";
+import { IoClose } from "react-icons/io5";
 
 const Wishlist = ({
   activePanel,
@@ -9,112 +10,161 @@ const Wishlist = ({
   clearWishlist,
 }) => {
   return (
-    <div
-      className={`
-  flex flex-col justify-between gap-5 bg-zinc-100 fixed z-50 border-zinc-300 py-7 
-  transform transition-transform duration-300
+    <>
+      {/* Backdrop */}
+      <div
+        onClick={closePanel}
+        className={`fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-all duration-300 ${
+          activePanel === "wishlist"
+            ? "visible opacity-100"
+            : "invisible opacity-0"
+        }`}
+      />
 
-  /* ✅ Desktop → Right Drawer */
-  md:top-0 md:right-0 md:bottom-0 md:left-auto md:w-[400px] md:h-full md:border-l
-  ${activePanel === "wishlist" ? "md:translate-x-0" : "md:translate-x-full"}
+      {/* Drawer */}
+      <section
+        className={`
+        fixed z-50 flex flex-col overflow-hidden
+        bg-white/95 backdrop-blur-xl
+        border border-white/30
+        shadow-[0_20px_60px_rgba(0,0,0,.18)]
+        transition-all duration-500
 
-  /* ✅ Mobile → Bottom Drawer */
-  top-auto bottom-0 left-0 right-0 h-[80vh] border-t md:border-0
-  ${
-    activePanel === "wishlist"
-      ? "translate-y-0 md:translate-y-0"
-      : "translate-y-full md:translate-y-0"
-  }
-`}
-    >
-      <div className="px-10">
-        <h3 className="text-3xl font-bold text-zinc-800 text-center">
-          Your Wishlist
-        </h3>
-      </div>
+        /* Desktop */
+        md:top-0 md:right-0 md:h-screen md:w-[430px]
+        md:rounded-l-[32px]
+        ${
+          activePanel === "wishlist"
+            ? "md:translate-x-0"
+            : "md:translate-x-full"
+        }
 
-      {/* card item */}
+        /* Mobile */
+        left-0 right-0 bottom-0 h-[88vh]
+        rounded-t-[32px]
+        ${activePanel === "wishlist" ? "translate-y-0" : "translate-y-full"}
+      `}
+      >
+        {/* Gradient Header */}
+        <div className="bg-gradient-to-r from-pink-500 via-rose-500 to-red-500 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-3xl font-extrabold text-white">
+                My Wishlist
+              </h2>
 
-      <div className="flex-1 flex flex-col gap-2 overflow-y-auto scroll">
-        {wishlist.length === 0 ? (
-          <div className="flex justify-center items-center gap-2 font-bold ">
-            <span className="flex justify-center items-center w-12 h-12">
-              <GoHeartFill className="text-[2rem] text-red-600" />
-            </span>
-            <p>Your Wishlist is Empty...</p>
+              <p className="mt-1 text-sm text-white/80">
+                {wishlist.length} Item{wishlist.length !== 1 && "s"} Saved
+              </p>
+            </div>
+
+            <button
+              onClick={closePanel}
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-white/20 text-white transition hover:rotate-90 hover:bg-white hover:text-red-500"
+            >
+              <IoClose size={24} />
+            </button>
           </div>
-        ) : (
-          wishlist.map((product, inx) => {
-            return (
+        </div>
+
+        {/* Wishlist Content */}
+        <div className="flex-1 overflow-y-auto bg-gradient-to-b from-zinc-50 to-white p-5 space-y-4">
+          {" "}
+          {/* Empty State */}
+          {wishlist.length === 0 ? (
+            <div className="flex h-full flex-col items-center justify-center text-center">
+              <div className="flex h-28 w-28 items-center justify-center rounded-full bg-gradient-to-br from-pink-100 to-red-100 shadow-lg">
+                <GoHeartFill className="text-6xl text-red-500" />
+              </div>
+
+              <h3 className="mt-8 text-3xl font-bold text-zinc-800">
+                Your Wishlist is Empty
+              </h3>
+
+              <p className="mt-3 max-w-xs leading-7 text-zinc-500">
+                Save your favorite products here and access them anytime.
+              </p>
+            </div>
+          ) : (
+            wishlist.map((product) => (
               <div
-                className={`flex items-center gap-3 px-3 py-1 border-y-1 border-zinc-300 ${
-                  inx % 2 === 0 ? "bg-white" : "bg-blue-100"
-                }`}
                 key={product.id}
+                className="group overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
               >
-                <div className="w-20 h-20  rounded-[.4rem]">
-                  {/* card image */}
+                {/* Image */}
+                <div className="relative flex items-center justify-center bg-gradient-to-br from-zinc-100 via-white to-pink-50 p-5">
                   <img
                     src={product.Image}
-                    alt="cloth"
-                    className="w-full h-full object-contain "
+                    alt={product.name}
+                    className="h-40 object-contain transition duration-500 group-hover:scale-110"
                   />
+
+                  {/* Added Date */}
+                  <span className="absolute left-4 top-4 rounded-full bg-white px-3 py-1 text-xs font-semibold text-zinc-600 shadow">
+                    {product.addDate}
+                  </span>
                 </div>
 
-                {/* product detail */}
-
-                <div className="flex-1">
-                  <div className="flex justify-between">
-                    <h4 className="font-semibold text-zinc-800 text-lg">
-                      {product.name}
-                    </h4>
-                    <div className="m-0">
-                      <span className="text-[10px]">{product.addDate}</span>
-                      <br />
-                      <span className="text-[10px]">{product.addTime}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between mt-2">
-                    <div className="flex flex-col">
-                      <span className="line-through text-[.8rem]">
+                {/* Product Details */}
+                <div className="p-5">
+                  <h3 className="line-clamp-2 text-lg font-bold text-zinc-800">
+                    {product.name}
+                  </h3>
+                  <p className="mt-1 text-sm text-zinc-500">
+                    Added at {product.addTime}
+                  </p>{" "}
+                  {/* Price */}
+                  <div className="mt-5 flex items-end justify-between">
+                    <div>
+                      <p className="text-sm text-zinc-400 line-through">
                         ₹ {product.oldPrice.toFixed(2)}
-                      </span>
-                      <span className="text-red-500 text-xl font-bold">
+                      </p>
+
+                      <p className="text-3xl font-bold text-red-500">
                         ₹ {product.price.toFixed(2)}
-                      </span>
+                      </p>
                     </div>
 
-                    <button
-                      className="bg-blue-600 text-white text-sm p-1.5 rounded-full px-5 active:bg-blue-700 cursor-pointer"
-                      onClick={() => addToCart(product)}
-                    >
-                      Add To Cart
-                    </button>
+                    <div className="rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-700">
+                      Saved ₹{(product.oldPrice - product.price).toFixed(2)}
+                    </div>
                   </div>
+                  {/* Button */}
+                  <button
+                    onClick={() => addToCart(product)}
+                    className="mt-6 flex h-12 w-full items-center justify-center rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl active:scale-95"
+                  >
+                    🛒 Add To Cart
+                  </button>
                 </div>
               </div>
-            );
-          })
-        )}
-      </div>
+            ))
+          )}
+        </div>
+        {/* Footer */}
+        <div className="border-t border-zinc-200 bg-white/90 backdrop-blur-xl p-5">
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={closePanel}
+              className="h-14 rounded-2xl border border-zinc-300 bg-white font-semibold text-zinc-700 transition-all duration-300 hover:-translate-y-1 hover:border-zinc-400 hover:shadow-lg active:scale-95"
+            >
+              Close
+            </button>
 
-      {/* button */}
-      <div className="flex gap-x-2">
-        <button
-          className="bg-blue-600 text-white flex-1 h-[7vh] rounded-full mx-1 cursor-pointer active:bg-blue-700"
-          onClick={closePanel}
-        >
-          Close
-        </button>
-        <button
-          className="bg-blue-600 text-white flex-1 h-[7vh] rounded-full mx-1 cursor-pointer active:bg-blue-700"
-          onClick={clearWishlist}
-        >
-          Clear All
-        </button>
-      </div>
-    </div>
+            <button
+              onClick={clearWishlist}
+              className="h-14 rounded-2xl bg-gradient-to-r from-red-500 via-rose-500 to-pink-500 font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl active:scale-95"
+            >
+              Clear Wishlist
+            </button>
+          </div>
+
+          <p className="mt-4 text-center text-xs text-zinc-400">
+            Your saved items will remain here until you remove them.
+          </p>
+        </div>
+      </section>
+    </>
   );
 };
 

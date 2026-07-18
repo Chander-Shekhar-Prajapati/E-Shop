@@ -1,14 +1,71 @@
 @import "tailwindcss";
 
-.scroll::-webkit-scrollbar {
-  display: none;
-}
+/* ------------------------------
+   Hide Scrollbar
+------------------------------ */
 
-/* index.css ya global.css me add karo */
+.scroll::-webkit-scrollbar,
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+.scroll,
 .scrollbar-hide {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ------------------------------
+   Smooth Scrolling
+------------------------------ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ------------------------------
+   Selection Color
+------------------------------ */
+
+::selection {
+  background: #2563eb;
+  color: white;
+}
+
+/* ------------------------------
+   Body
+------------------------------ */
+
+body {
+  background: #f8fafc;
+  color: #18181b;
+  overflow-x: hidden;
+  font-family: Inter, sans-serif;
+}
+
+/* ------------------------------
+   Button Cursor
+------------------------------ */
+
+button {
+  cursor: pointer;
+}
+
+/* ------------------------------
+   Image
+------------------------------ */
+
+img {
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ------------------------------
+   Input Focus
+------------------------------ */
+
+input,
+textarea,
+select {
+  outline: none;
 }

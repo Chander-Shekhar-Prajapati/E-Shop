@@ -16,123 +16,195 @@ const NavBar = ({
 }) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // ✅ body scroll lock/unlock on mobile menu
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "auto";
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
   }, [menuOpen]);
+
+  const closeMenu = () => setMenuOpen(false);
 
   return (
     <header
-      className={`bg-white fixed top-0 left-0 right-0 z-50 ${
-        isScrolled ? "shadow-lg" : ""
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+        isScrolled
+          ? "bg-white/95 backdrop-blur-md shadow-xl"
+          : "bg-white shadow-sm"
       }`}
     >
-      <nav className="max-w-[1350px] h-[12vh] flex items-center justify-between mx-auto px-6 md:px-12">
-        {/* logo */}
-        <a href="#" className="flex w-12 h-12 bg-zinc-100 rounded-full p-[5px]">
+      <nav className="max-w-[1350px] h-[12vh] mx-auto flex items-center justify-between px-5 lg:px-10">
+        {/* Logo */}
+        <a
+          href="#"
+          className="w-12 h-12 rounded-full overflow-hidden bg-zinc-100 p-1 shadow"
+        >
           <img src={Logo} alt="Logo" className="w-full h-full object-contain" />
         </a>
 
-        {/* Desktop nav actions */}
-        <div className=" md:flex items-center gap-x-5">
-          {/* search bar */}
-          <div className="relative w-52 md:w-80">
+        {/* Desktop Search */}
+        <div className="hidden md:flex items-center gap-6">
+          <div className="relative w-[340px]">
             <input
               type="text"
-              placeholder="Search item..."
+              placeholder="Search products..."
               autoComplete="off"
-              className="h-10 pl-4 pr-12 w-full rounded-full border-2 border-blue-600 focus:outline-none"
               onFocus={handelScroll}
               onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full h-11 rounded-full border-2 border-blue-600 pl-5 pr-14 outline-none transition focus:ring-4 focus:ring-blue-200"
             />
-            <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-600 text-white p-2 rounded-full">
-              <IoIosSearch />
+
+            <button
+              aria-label="Search"
+              className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center transition"
+            >
+              <IoIosSearch size={20} />
             </button>
           </div>
 
-          {/* wishlist */}
+          {/* Wishlist */}
           <button
-            className="hidden md:block text-[1.7rem] text-zinc-800 relative cursor-pointer"
             onClick={() => handelPanel("wishlist")}
+            className="relative text-3xl text-zinc-700 hover:text-red-500 transition"
           >
             <GoHeartFill />
+
             {wishlist.length > 0 && (
-              <span className=" flex justify-center items-center bg-red-600 text-white w-5 h-5 text-[12px] rounded-full absolute top-4 right-3 border-2 border-white">
+              <span className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-600 text-white text-[11px] flex items-center justify-center">
                 {wishlist.length}
               </span>
             )}
           </button>
 
-          {/* cart */}
+          {/* Cart */}
           <button
-            className="hidden md:block text-[1.7rem] text-zinc-800 relative cursor-pointer"
             onClick={() => handelPanel("cart")}
+            className="relative text-3xl text-zinc-700 hover:text-blue-600 transition"
           >
             <HiShoppingBag />
+
             {totalItem > 0 && (
-              <span className="flex justify-center items-center bg-red-600 text-white w-5 h-5 text-[12px] rounded-full absolute top-4 right-3 border-2 border-white">
+              <span className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-600 text-white text-[11px] flex items-center justify-center">
                 {totalItem}
               </span>
             )}
           </button>
         </div>
 
-        {/* Hamburger for mobile */}
-        <button
-          className="md:hidden text-2xl text-zinc-800"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          {menuOpen ? <IoMdClose /> : <GiHamburgerMenu />}
-        </button>
+        {/* Mobile Right Side */}
+        <div className="flex md:hidden items-center gap-4">
+          <button
+            onClick={() => handelPanel("wishlist")}
+            className="relative text-2xl text-zinc-700"
+          >
+            <GoHeartFill />
+
+            {wishlist.length > 0 && (
+              <span className="absolute -top-2 -right-2 w-4 h-4 rounded-full bg-red-600 text-white text-[9px] flex items-center justify-center">
+                {wishlist.length}
+              </span>
+            )}
+          </button>
+
+          <button
+            onClick={() => handelPanel("cart")}
+            className="relative text-2xl text-zinc-700"
+          >
+            <HiShoppingBag />
+
+            {totalItem > 0 && (
+              <span className="absolute -top-2 -right-2 w-4 h-4 rounded-full bg-red-600 text-white text-[9px] flex items-center justify-center">
+                {totalItem}
+              </span>
+            )}
+          </button>
+
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="text-3xl text-zinc-700"
+          >
+            {menuOpen ? <IoMdClose /> : <GiHamburgerMenu />}
+          </button>
+        </div>
       </nav>
 
       {/* Mobile Menu */}
-      {menuOpen && (
-        <div className="md:hidden fixed inset-0 top-[12vh] bg-white shadow-lg px-6 py-4 flex flex-col gap-4 z-40 overflow-y-auto">
-          {/* search */}
-          {/* <div className="flex p-1 rounded-full border-2 border-blue-600">
+      <div
+        className={`md:hidden fixed left-0 w-full bg-white shadow-xl transition-all duration-300 overflow-hidden ${
+          menuOpen
+            ? "top-[12vh] opacity-100 max-h-[100vh]"
+            : "top-[12vh] opacity-0 max-h-0"
+        }`}
+      >
+        <div className="p-5">
+          {/* Mobile Search */}
+          <div className="relative">
             <input
               type="text"
-              placeholder="Search item..."
+              placeholder="Search products..."
               autoComplete="off"
-              className="h-[5vh] pl-4 flex-1 focus:outline-none"
               onFocus={handelScroll}
               onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full h-11 rounded-full border-2 border-blue-600 pl-5 pr-14 outline-none"
             />
-            <button className="flex justify-center items-center w-10 h-10 rounded-full bg-blue-600 text-white text-xl">
+
+            <button className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center">
               <IoIosSearch />
             </button>
-          </div> */}
-
-          {/* wishlist */}
+          </div>
+          {/* Wishlist */}
           <button
-            className="flex items-center gap-2 text-lg text-zinc-800 relative cursor-pointer"
-            onClick={() => handelPanel("wishlist")}
+            onClick={() => {
+              handelPanel("wishlist");
+              closeMenu();
+            }}
+            className="mt-6 flex items-center justify-between w-full rounded-xl border border-zinc-200 p-4 hover:bg-zinc-100 transition"
           >
-            <GoHeartFill className="text-2xl" />
-            <span>Wishlist</span>
+            <div className="flex items-center gap-3">
+              <GoHeartFill className="text-2xl text-red-500" />
+              <span className="font-medium text-zinc-700">Wishlist</span>
+            </div>
+
             {wishlist.length > 0 && (
-              <span className="ml-auto flex justify-center items-center bg-red-600 text-white w-5 h-5 text-[12px] rounded-full border-2 border-white">
+              <span className="w-6 h-6 rounded-full bg-red-600 text-white text-xs flex items-center justify-center">
                 {wishlist.length}
               </span>
             )}
           </button>
 
-          {/* cart */}
+          {/* Cart */}
           <button
-            className="flex items-center gap-2 text-lg text-zinc-800 relative cursor-pointer"
-            onClick={() => handelPanel("cart")}
+            onClick={() => {
+              handelPanel("cart");
+              closeMenu();
+            }}
+            className="mt-4 flex items-center justify-between w-full rounded-xl border border-zinc-200 p-4 hover:bg-zinc-100 transition"
           >
-            <HiShoppingBag className="text-2xl" />
-            <span>Cart</span>
+            <div className="flex items-center gap-3">
+              <HiShoppingBag className="text-2xl text-blue-600" />
+              <span className="font-medium text-zinc-700">Cart</span>
+            </div>
+
             {totalItem > 0 && (
-              <span className="ml-auto flex justify-center items-center bg-red-600 text-white w-5 h-5 text-[12px] rounded-full border-2 border-white">
+              <span className="w-6 h-6 rounded-full bg-red-600 text-white text-xs flex items-center justify-center">
                 {totalItem}
               </span>
             )}
           </button>
+
+          {/* Divider */}
+          <div className="my-6 h-px bg-zinc-200" />
+
+          {/* Close Button */}
+          <button
+            onClick={closeMenu}
+            className="w-full rounded-xl bg-blue-600 py-3 text-white font-semibold hover:bg-blue-700 transition"
+          >
+            Close Menu
+          </button>
         </div>
-      )}
+      </div>
     </header>
   );
 };

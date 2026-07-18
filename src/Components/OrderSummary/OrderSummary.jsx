@@ -1,4 +1,6 @@
 import React from "react";
+import { IoClose } from "react-icons/io5";
+import { FaClipboardCheck } from "react-icons/fa";
 
 const OrderSummary = ({
   cart,
@@ -14,69 +16,141 @@ const OrderSummary = ({
     setOrderPlace(true);
     setCart([]);
   };
+
   return (
-    <section className="flex justify-center items-center bg-black/95 fixed inset-0 z-51">
-      <div className="bg-zinc-100 p-8 w-[600px] rounded-lg border-1 border-zinc-300 ">
-        <h2 className="text-3xl text-zinc-800 font-bold mb-5 text-center">
-          Order Summary
-        </h2>
-        <div>
-          <div>
-            <div>
-              {cart.map((item) => (
-                <div
-                  className="flex justify-between items-center z-52"
-                  key={item.id}
-                >
-                  <span className="text-zinc-800 py-2">
-                    {item.name} (x{item.quantity})
-                  </span>
+    <section className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4">
+      {/* Modal */}
+      <div className="relative w-full max-w-2xl rounded-3xl bg-white shadow-2xl overflow-hidden animate-[popup_.35s_ease]">
+        {/* Top Gradient */}
+        <div className="h-2 bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600"></div>
 
-                  <span className="text-zinc-800 py-2">
-                    {(item.price * item.quantity).toFixed(2)}
-                  </span>
-                </div>
-              ))}
-            </div>
+        {/* Close Button */}
+        <button
+          onClick={() => setOrderSummary(false)}
+          className="absolute right-5 top-5 flex h-10 w-10 items-center justify-center rounded-full bg-zinc-100 transition hover:bg-red-500 hover:text-white"
+        >
+          <IoClose size={22} />
+        </button>
+
+        {/* Header */}
+        <div className="px-8 pt-8 text-center">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-blue-100">
+            <FaClipboardCheck className="text-5xl text-blue-600" />
           </div>
 
-          <div className="flex justify-between mt-2">
-            <span className="text-zinc-800 text-lg">SubTotal</span>
-            <span className="text-zinc-800 ">₹ {subTotal.toFixed(2)}</span>
-          </div>
+          <h2 className="mt-5 text-3xl font-bold text-zinc-800">
+            Order Summary
+          </h2>
 
-          <div className="flex justify-between mt-2">
-            <span className="text-zinc-800 text-lg">Shipping & Handling</span>
-            <span className="text-zinc-800">₹ {shippingFee.toFixed(2)}</span>
-          </div>
-
-          <div className="flex justify-between mt-2 bg-red-400 px-2 rounded-[.5rem]">
-            <span className="text-blue-800 font-bold text-lg py-2">
-              Total Amount
-            </span>
-            <span className="text-blue-800 font-bold py-2">
-              ₹ {orderTotal.toFixed(2)}
-            </span>
-          </div>
+          <p className="mt-2 text-zinc-500">
+            Please review your order before placing it.
+          </p>
         </div>
 
-        <div className="flex gap-3 mt-5 ">
+        {/* Product List */}
+        <div className="mt-8 max-h-[320px] overflow-y-auto px-6 space-y-4">
+          {cart.map((item) => (
+            <div
+              key={item.id}
+              className="flex items-center justify-between rounded-2xl border border-zinc-200 bg-zinc-50 p-4 hover:shadow-md transition"
+            >
+              <div>
+                <h4 className="font-semibold text-zinc-800">{item.name}</h4>
+
+                <p className="mt-1 text-sm text-zinc-500">
+                  Quantity : {item.quantity}
+                </p>
+              </div>
+
+              <div className="text-right">
+                <p className="font-bold text-blue-600">
+                  ₹ {(item.price * item.quantity).toFixed(2)}
+                </p>
+
+                <p className="text-sm text-zinc-500">
+                  ₹ {item.price.toFixed(2)} / item
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+        {/* Bill Summary */}
+        <div className="px-6 mt-6">
+          <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-5">
+            <div className="flex items-center justify-between py-2">
+              <span className="text-zinc-600">Subtotal</span>
+
+              <span className="font-semibold text-zinc-800">
+                ₹ {subTotal.toFixed(2)}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between py-2">
+              <span className="text-zinc-600">Shipping & Handling</span>
+
+              <span className="font-semibold text-zinc-800">
+                ₹ {shippingFee.toFixed(2)}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between py-2">
+              <span className="text-zinc-600">GST</span>
+
+              <span className="font-semibold text-green-600">Included</span>
+            </div>
+
+            <div className="my-4 border-t border-dashed border-zinc-300"></div>
+
+            {/* Total */}
+            <div className="rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-4 text-white shadow-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-blue-100">Total Amount</p>
+
+                  <h3 className="mt-1 text-3xl font-bold">
+                    ₹ {orderTotal.toFixed(2)}
+                  </h3>
+                </div>
+
+                <div className="rounded-full bg-white/20 px-4 py-2 text-sm font-semibold backdrop-blur">
+                  Secure Payment
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* Action Buttons */}
+        <div className="mt-8 flex flex-col-reverse gap-3 px-6 pb-8 sm:flex-row">
           <button
-            className={`bg-blue-500 flex-1 py-3 active:bg-blue-700 rounded-full text-[.9rem] font-bold cursor-pointer`}
-            onClick={() => {
-              setOrderSummary(false);
-            }}
+            onClick={() => setOrderSummary(false)}
+            className="flex-1 rounded-xl border border-zinc-300 py-3 font-semibold text-zinc-700 transition-all duration-300 hover:bg-zinc-100 hover:border-zinc-400 active:scale-95"
           >
             Cancel
           </button>
+
           <button
-            className="bg-blue-500 flex-1 py-3 active:bg-blue-700 rounded-full text-[.9rem] font-bold "
             onClick={handelPlaceOrder}
+            className="flex-1 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 py-3 font-semibold text-white shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.02] active:scale-95"
           >
             Place Order
           </button>
         </div>
       </div>
+
+      {/* Popup Animation */}
+      <style>{`
+        @keyframes popup {
+          0% {
+            opacity: 0;
+            transform: translateY(25px) scale(0.9);
+          }
+
+          100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+      `}</style>
     </section>
   );
 };
