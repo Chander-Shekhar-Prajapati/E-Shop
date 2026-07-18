@@ -18,7 +18,7 @@ const OrderSummary = ({
   };
 
   return (
-    <section className="fixed inset-0 z-[999] flex items-center justify-center bg-black/60 p-3 backdrop-blur-md sm:p-5">
+    <section className="fixed inset-0 z-[999] flex items-center justify-center bg-black/60 p-3 backdrop-blur-md sm:p-5 mt-6">
       {/* Modal */}
       <div className="relative flex max-h-[95vh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl bg-white shadow-[0_25px_80px_rgba(0,0,0,0.25)] animate-[popup_.35s_ease]">
         {/* Top Gradient */}
